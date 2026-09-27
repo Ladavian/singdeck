@@ -1,0 +1,21 @@
+SingDeck Binary Distribution License
+
+Copyright (c) 2026 Ladavian. All rights reserved.
+
+Permission is granted to download and use the compiled SingDeck binaries for
+personal, non-commercial purposes. Permission is also granted to use and adapt
+the installation scripts in this repository solely for installing, updating,
+or removing SingDeck on systems you control.
+
+No permission is granted to redistribute, sell, sublicense, reverse engineer,
+decompile, or create derivative products from the SingDeck binaries. No rights
+to the private source code are granted or implied.
+
+Third-party software downloaded or used by SingDeck remains subject to its own
+license terms.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING
+FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR ITS USE.
