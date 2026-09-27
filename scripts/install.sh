@@ -23,9 +23,12 @@ esac
 
 export DEBIAN_FRONTEND=noninteractive
 MISSING=""
-for CMD in ca-certificates curl jq tar sha256sum; do
+for CMD in curl jq tar sha256sum; do
   command -v "$CMD" >/dev/null 2>&1 || MISSING="$MISSING $CMD"
 done
+if [ ! -r /etc/ssl/certs/ca-certificates.crt ]; then
+  MISSING="$MISSING ca-certificates"
+fi
 if [ -n "$MISSING" ]; then
   apt-get update
   apt-get install -y ca-certificates curl jq tar coreutils
