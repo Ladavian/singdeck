@@ -6,13 +6,13 @@
 
 ## 功能概览
 
-- 订阅、节点与节点筛选组管理
+- 订阅、节点与节点筛选组管理，支持 Sing-box JSON、Clash YAML/JSON 和常见协议链接
 - 可编辑、可排序的规则策略和远程规则集
 - DNS 分流、FakeIP 和实时查询监控
 - Mixed、TProxy、Clash API 与系统服务管理
 - 自动、亮色、暗色主题和移动端适配
 - 生成其他设备使用的配置链接和二维码
-- Sing-box 核心版本检查、配置校验与日志查看
+- SingDeck 软件与 Sing-box 核心在线检查、校验安装、失败恢复和服务重启
 - 管理员用户名和密码修改、全会话退出和加盐密码保护
 
 ## 支持范围
@@ -70,16 +70,18 @@ http://服务器IP:8080
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/install.sh \
-  | sudo SINGDECK_VERSION=v0.3.2 sh
+  | sudo SINGDECK_VERSION=v0.3.3 sh
 ```
 
 ## 更新
 
-重新执行安装命令即可保留数据库和密码并更新程序：
+v0.3.3 起可以在“系统 → 在线更新”中分别更新 SingDeck 软件和 Sing-box 核心。第一次从旧版本升级到 v0.3.3 时，重新执行安装命令即可保留数据库、密码和现有配置：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/update.sh | sudo sh
 ```
+
+通过 GitHub 代理安装时，安装器会保存代理地址，后续在网页中检查和下载 SingDeck / Sing-box 更新时会继续使用它。
 
 无法直连 GitHub 时：
 

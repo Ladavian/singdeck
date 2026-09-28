@@ -2,7 +2,7 @@
 set -eu
 
 REPO="Ladavian/singdeck"
-LATEST_SINGDECK_VERSION="v0.3.2"
+LATEST_SINGDECK_VERSION="v0.3.3"
 SING_BOX_VERSION="1.14.2"
 GITHUB_PROXY=${GITHUB_PROXY:-}
 GITHUB_PROXY_NONCE=$(date +%s)
@@ -101,7 +101,7 @@ fi
 case "$VERSION" in
   v[0-9]*) ;;
   [0-9]*) VERSION="v$VERSION" ;;
-  *) fail "无法识别版本号：${VERSION:-空值}（示例：v0.3.2）" ;;
+  *) fail "无法识别版本号：${VERSION:-空值}（示例：v0.3.3）" ;;
 esac
 
 ASSET="singdeck-${VERSION}-linux-${ARCH}.tar.gz"
@@ -148,6 +148,10 @@ if [ ! -f /etc/singdeck/singdeck.env ]; then
   PASSWORD=$(od -An -N18 -tx1 /dev/urandom | tr -d ' \n')
   umask 077
   printf 'SINGDECK_ADMIN_PASSWORD=%s\n' "$PASSWORD" > /etc/singdeck/singdeck.env
+fi
+if [ -n "$GITHUB_PROXY" ]; then
+  sed -i '/^SINGDECK_GITHUB_PROXY=/d' /etc/singdeck/singdeck.env
+  printf 'SINGDECK_GITHUB_PROXY=%s\n' "$GITHUB_PROXY" >> /etc/singdeck/singdeck.env
 fi
 
 cat > /etc/systemd/system/singdeck.service <<'EOF'
