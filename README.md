@@ -110,8 +110,6 @@ journalctl -u singdeck -n 200 --no-pager
 
 ## 关于源码
 
-SingDeck 当前为私有闭源项目。公开仓库不包含历史源代码、构建配置或开发分支；发布安装包由独立的私有源码仓库构建。
-
 Copyright © 2026 Ladavian. 个人、非商业用途可免费下载和使用，具体条款见 [LICENSE](LICENSE)。
 
 SingDeck 与 SagerNet、sing-box 项目无隶属关系。Sing-box 由安装脚本从其官方 GitHub Release 获取，并遵循上游项目自己的许可证。
