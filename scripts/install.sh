@@ -86,7 +86,7 @@ install_sing_box() {
   curl -fL --retry 3 -o "$TMP_DIR/$SB_NAME" "$(github_url "$SB_URL")"
   printf '%s  %s\n' "$SB_DIGEST" "$TMP_DIR/$SB_NAME" | sha256sum -c -
   mkdir -p "$TMP_DIR/sing-box"
-  tar -xzf "$TMP_DIR/$SB_NAME" -C "$TMP_DIR/sing-box"
+  tar --warning=no-unknown-keyword -xzf "$TMP_DIR/$SB_NAME" -C "$TMP_DIR/sing-box"
   SB_BIN=$(find "$TMP_DIR/sing-box" -type f -name sing-box | head -n 1)
   [ -n "$SB_BIN" ] || fail "Sing-box 安装包中未找到程序文件"
   install -m 0755 "$SB_BIN" /usr/local/bin/sing-box
@@ -114,7 +114,7 @@ curl -fL --retry 3 -o "$TMP_DIR/$ASSET.sha256" "$(github_url "$BASE_URL/$ASSET.s
 (cd "$TMP_DIR" && sha256sum -c "$ASSET.sha256")
 
 mkdir -p "$TMP_DIR/singdeck"
-tar -xzf "$TMP_DIR/$ASSET" -C "$TMP_DIR/singdeck"
+tar --warning=no-unknown-keyword -xzf "$TMP_DIR/$ASSET" -C "$TMP_DIR/singdeck"
 [ -x "$TMP_DIR/singdeck/singdeck" ] || fail "安装包内容不完整"
 
 install_sing_box
@@ -130,7 +130,20 @@ cat > /etc/sysctl.d/99-singdeck.conf <<'EOF'
 net.ipv4.ip_forward = 1
 net.ipv6.conf.all.forwarding = 1
 EOF
-sysctl --system >/dev/null
+
+apply_singdeck_sysctl() {
+  SINGDECK_SYSCTL_KEY=$1
+  SINGDECK_SYSCTL_VALUE=$(sysctl -n "$SINGDECK_SYSCTL_KEY" 2>/dev/null || true)
+  if [ "$SINGDECK_SYSCTL_VALUE" = "1" ]; then
+    return
+  fi
+  if ! sysctl -w "$SINGDECK_SYSCTL_KEY=1" >/dev/null 2>&1; then
+    printf '提示：LXC 不允许修改 %s，请在 PVE 宿主机确认该容器允许网络转发。\n' "$SINGDECK_SYSCTL_KEY" >&2
+  fi
+}
+
+apply_singdeck_sysctl net.ipv4.ip_forward
+apply_singdeck_sysctl net.ipv6.conf.all.forwarding
 
 if [ ! -f /etc/singdeck/singdeck.env ]; then
   PASSWORD=$(od -An -N18 -tx1 /dev/urandom | tr -d ' \n')
