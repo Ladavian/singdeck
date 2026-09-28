@@ -3,6 +3,7 @@ set -eu
 
 REPO="Ladavian/singdeck"
 GITHUB_PROXY=${GITHUB_PROXY:-}
+GITHUB_PROXY_NONCE=$(date +%s)
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT INT TERM
 
@@ -14,7 +15,11 @@ fail() {
 github_url() {
   TARGET_URL=$1
   if [ -n "$GITHUB_PROXY" ]; then
-    printf '%s/%s\n' "${GITHUB_PROXY%/}" "$TARGET_URL"
+    case "$TARGET_URL" in
+      *\?*) QUERY_SEPARATOR='&' ;;
+      *) QUERY_SEPARATOR='?' ;;
+    esac
+    printf '%s/%s%ssingdeck=%s\n' "${GITHUB_PROXY%/}" "$TARGET_URL" "$QUERY_SEPARATOR" "$GITHUB_PROXY_NONCE"
   else
     printf '%s\n' "$TARGET_URL"
   fi
