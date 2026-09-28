@@ -23,7 +23,7 @@ esac
 
 export DEBIAN_FRONTEND=noninteractive
 MISSING=""
-for CMD in curl jq tar sha256sum; do
+for CMD in curl jq tar sha256sum nft ip sysctl; do
   command -v "$CMD" >/dev/null 2>&1 || MISSING="$MISSING $CMD"
 done
 if [ ! -r /etc/ssl/certs/ca-certificates.crt ]; then
@@ -31,15 +31,25 @@ if [ ! -r /etc/ssl/certs/ca-certificates.crt ]; then
 fi
 if [ -n "$MISSING" ]; then
   apt-get update
-  apt-get install -y ca-certificates curl jq tar coreutils
+  apt-get install -y ca-certificates curl jq tar coreutils nftables iproute2 procps
 fi
 
+sing_box_compatible() {
+  BIN=$1
+  [ -x "$BIN" ] || return 1
+  CURRENT=$($BIN version 2>/dev/null | sed -n 's/^sing-box version v*\([0-9][0-9.]*\).*$/\1/p' | head -n 1)
+  [ -n "$CURRENT" ] || return 1
+  FIRST=$(printf '%s\n%s\n' 1.14.0 "$CURRENT" | sort -V | head -n 1)
+  [ "$FIRST" = "1.14.0" ]
+}
+
 install_sing_box() {
-  if [ -x /usr/local/bin/sing-box ]; then
+  if sing_box_compatible /usr/local/bin/sing-box; then
     return
   fi
-  if command -v sing-box >/dev/null 2>&1; then
-    ln -sf "$(command -v sing-box)" /usr/local/bin/sing-box
+  SYSTEM_BIN=$(command -v sing-box 2>/dev/null || true)
+  if [ -n "$SYSTEM_BIN" ] && [ "$SYSTEM_BIN" != "/usr/local/bin/sing-box" ] && sing_box_compatible "$SYSTEM_BIN"; then
+    install -m 0755 "$SYSTEM_BIN" /usr/local/bin/sing-box
     return
   fi
 
@@ -59,6 +69,7 @@ install_sing_box() {
   SB_BIN=$(find "$TMP_DIR/sing-box" -type f -name sing-box | head -n 1)
   [ -n "$SB_BIN" ] || fail "Sing-box 安装包中未找到程序文件"
   install -m 0755 "$SB_BIN" /usr/local/bin/sing-box
+  sing_box_compatible /usr/local/bin/sing-box || fail "安装后的 Sing-box 版本低于 1.14.0"
 }
 
 if [ "${SINGDECK_VERSION:-latest}" = "latest" ]; then
@@ -93,6 +104,12 @@ fi
 
 install -d -m 0750 /etc/singdeck /etc/sing-box /var/lib/singdeck /var/lib/sing-box
 install -m 0755 "$TMP_DIR/singdeck/singdeck" /usr/local/bin/singdeck
+cat > /etc/sysctl.d/99-singdeck.conf <<'EOF'
+# Required by SingDeck's TProxy policy routing.
+net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = 1
+EOF
+sysctl --system >/dev/null
 
 if [ ! -f /etc/singdeck/singdeck.env ]; then
   PASSWORD=$(od -An -N18 -tx1 /dev/urandom | tr -d ' \n')
@@ -111,6 +128,7 @@ Type=simple
 User=root
 Group=root
 EnvironmentFile=-/etc/singdeck/singdeck.env
+ExecStartPre=/usr/local/bin/singdeck --restore-network --data-dir /var/lib/singdeck --sing-box /usr/local/bin/sing-box --config /etc/sing-box/config.json
 ExecStart=/usr/local/bin/singdeck --listen 0.0.0.0:8080 --data-dir /var/lib/singdeck --sing-box /usr/local/bin/sing-box --config /etc/sing-box/config.json
 Restart=on-failure
 RestartSec=3
@@ -118,7 +136,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
-ReadWritePaths=/var/lib/singdeck /etc/sing-box
+ReadWritePaths=/var/lib/singdeck /etc/sing-box /usr/local/bin/sing-box
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 LimitNOFILE=1048576
@@ -127,28 +145,28 @@ LimitNOFILE=1048576
 WantedBy=multi-user.target
 EOF
 
-if [ ! -f /etc/systemd/system/sing-box.service ]; then
-  cat > /etc/systemd/system/sing-box.service <<'EOF'
+cat > /etc/systemd/system/sing-box.service <<'EOF'
 [Unit]
 Description=sing-box Service managed by SingDeck
-After=network-online.target
-Wants=network-online.target
+After=network-online.target singdeck.service
+Wants=network-online.target singdeck.service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/sing-box run -c /etc/sing-box/config.json
+ExecStart=/usr/local/bin/sing-box run -D /var/lib/sing-box -C /etc/sing-box
+ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=1048576
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
 
 [Install]
 WantedBy=multi-user.target
 EOF
-fi
 
 systemctl daemon-reload
+systemctl enable sing-box.service
 systemctl enable --now singdeck.service
 
 HOST_IP=$(hostname -I 2>/dev/null | awk '{print $1}')

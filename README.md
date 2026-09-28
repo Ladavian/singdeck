@@ -13,6 +13,7 @@
 - 自动、亮色、暗色主题和移动端适配
 - 生成其他设备使用的配置链接和二维码
 - Sing-box 核心版本检查、配置校验与日志查看
+- 管理员用户名和密码修改、全会话退出和加盐密码保护
 
 ## 支持范围
 
@@ -48,11 +49,13 @@ http://服务器IP:8080
 
 管理员用户名为 `admin`，初始密码由安装器随机生成。
 
+首次登录后请在“系统 → 账号安全”中修改用户名和密码；保存后所有旧的管理会话都会自动退出。
+
 ## 安装指定版本
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/install.sh \
-  | sudo SINGDECK_VERSION=v0.3.1 sh
+  | sudo SINGDECK_VERSION=v0.3.2 sh
 ```
 
 ## 更新
@@ -103,6 +106,7 @@ journalctl -u singdeck -n 200 --no-pager
 - 设备配置链接拥有读取完整节点配置的能力，不用时请立即撤销。
 - 请勿公开 `/etc/singdeck/singdeck.env`、数据库、订阅地址和分享链接。
 - 每个 Release 资产都提供独立 SHA256 文件，安装器校验通过后才会替换程序。
+- 安装器要求 Sing-box 1.14.0 或更高版本；旧核心会自动更新到官方稳定版。
 
 ## 关于源码
 
