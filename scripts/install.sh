@@ -2,7 +2,7 @@
 set -eu
 
 REPO="Ladavian/singdeck"
-API="https://api.github.com/repos/$REPO"
+GITHUB_PROXY=${GITHUB_PROXY:-}
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT INT TERM
 
@@ -10,6 +10,22 @@ fail() {
   printf 'SingDeck 安装失败：%s\n' "$*" >&2
   exit 1
 }
+
+github_url() {
+  TARGET_URL=$1
+  if [ -n "$GITHUB_PROXY" ]; then
+    printf '%s/%s\n' "${GITHUB_PROXY%/}" "$TARGET_URL"
+  else
+    printf '%s\n' "$TARGET_URL"
+  fi
+}
+
+case "$GITHUB_PROXY" in
+  ""|http://*|https://*) ;;
+  *) fail "GITHUB_PROXY 必须是以 http:// 或 https:// 开头的地址" ;;
+esac
+
+API=$(github_url "https://api.github.com/repos/$REPO")
 
 [ "$(id -u)" -eq 0 ] || fail "请使用 root 运行，或在命令中保留 sudo"
 [ -f /etc/debian_version ] || fail "当前版本仅支持 Debian / PVE LXC"
@@ -54,7 +70,7 @@ install_sing_box() {
   fi
 
   printf '正在从 SagerNet 官方 Release 安装 Sing-box…\n'
-  SB_JSON=$(curl -fsSL --retry 3 "https://api.github.com/repos/SagerNet/sing-box/releases/latest")
+  SB_JSON=$(curl -fsSL --retry 3 "$(github_url "https://api.github.com/repos/SagerNet/sing-box/releases/latest")")
   SB_TAG=$(printf '%s' "$SB_JSON" | jq -r '.tag_name')
   SB_VERSION=${SB_TAG#v}
   SB_NAME="sing-box-${SB_VERSION}-linux-${ARCH}.tar.gz"
@@ -62,7 +78,7 @@ install_sing_box() {
   SB_DIGEST=$(printf '%s' "$SB_JSON" | jq -r --arg name "$SB_NAME" '.assets[] | select(.name == $name) | .digest' | sed 's/^sha256://')
   [ -n "$SB_URL" ] && [ "$SB_URL" != "null" ] || fail "官方 Release 中没有找到 $SB_NAME"
   [ -n "$SB_DIGEST" ] && [ "$SB_DIGEST" != "null" ] || fail "官方 Release 未提供 Sing-box SHA256"
-  curl -fL --retry 3 -o "$TMP_DIR/$SB_NAME" "$SB_URL"
+  curl -fL --retry 3 -o "$TMP_DIR/$SB_NAME" "$(github_url "$SB_URL")"
   printf '%s  %s\n' "$SB_DIGEST" "$TMP_DIR/$SB_NAME" | sha256sum -c -
   mkdir -p "$TMP_DIR/sing-box"
   tar -xzf "$TMP_DIR/$SB_NAME" -C "$TMP_DIR/sing-box"
@@ -88,8 +104,8 @@ ASSET="singdeck-${VERSION}-linux-${ARCH}.tar.gz"
 BASE_URL="https://github.com/$REPO/releases/download/$VERSION"
 
 printf '正在下载 SingDeck %s (%s)…\n' "$VERSION" "$ARCH"
-curl -fL --retry 3 -o "$TMP_DIR/$ASSET" "$BASE_URL/$ASSET"
-curl -fL --retry 3 -o "$TMP_DIR/$ASSET.sha256" "$BASE_URL/$ASSET.sha256"
+curl -fL --retry 3 -o "$TMP_DIR/$ASSET" "$(github_url "$BASE_URL/$ASSET")"
+curl -fL --retry 3 -o "$TMP_DIR/$ASSET.sha256" "$(github_url "$BASE_URL/$ASSET.sha256")"
 (cd "$TMP_DIR" && sha256sum -c "$ASSET.sha256")
 
 mkdir -p "$TMP_DIR/singdeck"

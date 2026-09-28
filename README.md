@@ -28,9 +28,24 @@
 
 SSH 登录 Debian / PVE LXC 后执行：
 
+### GitHub 直连
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/install.sh | sudo sh
 ```
+
+### 国内网络（GitHub 代理）
+
+无法直接访问 GitHub 时，可以使用下面的代理安装命令：
+
+```bash
+curl -fsSL https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/install.sh \
+  | sudo GITHUB_PROXY=https://gh-proxy.com sh
+```
+
+`GITHUB_PROXY` 会同时代理安装脚本后续访问的 GitHub API、SingDeck Release 和 Sing-box Release，不会出现“第一段脚本能下载、安装包仍然下载失败”的情况。安装包下载后仍会执行 SHA256 完整性校验。
+
+> `gh-proxy.com` 是第三方公共代理，并非 GitHub、SingDeck 或 SagerNet 官方服务。代理不可用时可更换为兼容“代理前缀 + 完整 GitHub URL”格式的服务；涉及敏感环境时建议使用 GitHub 直连或自建代理。
 
 安装脚本会：
 
@@ -64,6 +79,13 @@ curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/inst
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/update.sh | sudo sh
+```
+
+无法直连 GitHub 时：
+
+```bash
+curl -fsSL https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/update.sh \
+  | sudo GITHUB_PROXY=https://gh-proxy.com sh
 ```
 
 ## 卸载
