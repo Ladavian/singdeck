@@ -1,5 +1,11 @@
 # 更新记录
 
+## v0.3.4
+
+- 修复新版 nftables 将 `tproxy` 识别为保留关键字、导致首次应用配置失败的问题
+- 将 nftables 基础链改为兼容的多行语法，并在 Debian / PVE LXC 实机完成校验
+- 核心启动或重启前检查配置文件；尚未应用配置时给出明确操作提示
+
 ## v0.3.3
 
 - 新增 Clash YAML / JSON 订阅解析，覆盖 SS、Trojan、VLESS、VMess、Hysteria2 与 TUIC

@@ -2,7 +2,7 @@
 set -eu
 
 REPO="Ladavian/singdeck"
-LATEST_SINGDECK_VERSION="v0.3.3"
+LATEST_SINGDECK_VERSION="v0.3.4"
 SING_BOX_VERSION="1.14.2"
 GITHUB_PROXY=${GITHUB_PROXY:-}
 GITHUB_PROXY_NONCE=$(date +%s)
@@ -101,7 +101,7 @@ fi
 case "$VERSION" in
   v[0-9]*) ;;
   [0-9]*) VERSION="v$VERSION" ;;
-  *) fail "无法识别版本号：${VERSION:-空值}（示例：v0.3.3）" ;;
+  *) fail "无法识别版本号：${VERSION:-空值}（示例：v0.3.4）" ;;
 esac
 
 ASSET="singdeck-${VERSION}-linux-${ARCH}.tar.gz"
