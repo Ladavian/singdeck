@@ -3,7 +3,7 @@ set -eu
 
 TMP_SCRIPT=$(mktemp)
 trap 'rm -f "$TMP_SCRIPT"' EXIT INT TERM
-INSTALL_REF=${SINGDECK_INSTALL_REF:-9dfa48fc36672da227d7b6101c5b0234760db256}
+INSTALL_REF=${SINGDECK_INSTALL_REF:-d4ead50e7f7da1d249455fa4d50268530699bac1}
 INSTALL_URL="https://raw.githubusercontent.com/Ladavian/singdeck/$INSTALL_REF/scripts/install.sh"
 if [ -n "${GITHUB_PROXY:-}" ]; then
   case "$GITHUB_PROXY" in
