@@ -1,5 +1,10 @@
 # 更新记录
 
+## v0.3.7
+
+- 官方 Dashboard 下载自动沿用安装器保存的 GitHub 代理
+- 修复无法直连 GitHub 的 Debian / PVE LXC 中 9090 官方面板返回 404 的问题
+
 ## v0.3.6
 
 - 改用 sing-box 1.14 官方 API 与官方 Dashboard，9090 直接展示规则组、连接和实时流量

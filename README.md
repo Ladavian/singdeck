@@ -70,7 +70,7 @@ http://服务器IP:8080
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/install.sh \
-  | sudo SINGDECK_VERSION=v0.3.6 sh
+  | sudo SINGDECK_VERSION=v0.3.7 sh
 ```
 
 ## 更新
