@@ -1,5 +1,11 @@
 # 更新记录
 
+## v0.3.5
+
+- 修复 Sing-box 1.14.2 运行时拒绝直连 DNS 绕到空 `direct` 出站的问题
+- 直连 DNS 改用 Sing-box 1.14 原生直连拨号，代理 DNS 仍通过 `Proxy` 选择器
+- 在真实 52 节点配置上验证核心持续运行、TProxy、Mixed、DNS 与 Clash API 端口正常监听
+
 ## v0.3.4
 
 - 修复新版 nftables 将 `tproxy` 识别为保留关键字、导致首次应用配置失败的问题
