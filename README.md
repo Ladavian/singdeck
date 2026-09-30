@@ -40,7 +40,7 @@ curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/inst
 无法直接访问 GitHub 时，可以使用下面的代理安装命令：
 
 ```bash
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/0296e245df6902c8b6d19c1e1bcf629172e76867/scripts/install.sh" \
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/d47557ddb091e4b1862d94e4286dc00f3c77e299/scripts/install.sh" \
   | sudo GITHUB_PROXY=https://gh-proxy.com sh
 ```
 
@@ -87,7 +87,7 @@ curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/upda
 无法直连 GitHub 时：
 
 ```bash
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/0296e245df6902c8b6d19c1e1bcf629172e76867/scripts/install.sh" \
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/d47557ddb091e4b1862d94e4286dc00f3c77e299/scripts/install.sh" \
   | sudo GITHUB_PROXY=https://gh-proxy.com sh
 ```
 
