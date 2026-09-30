@@ -8,6 +8,7 @@
 
 - 订阅、节点与节点筛选组管理，支持 Sing-box JSON、Clash YAML/JSON 和常见协议链接
 - 可编辑、可排序的规则策略和远程规则集
+- 每条路由策略对应官方 Dashboard 中可切换的策略组，并显示配置应用状态
 - DNS 分流、FakeIP 和实时查询监控
 - Mixed、TProxy、sing-box 1.14 官方 API / Dashboard 与系统服务管理
 - 自动、亮色、暗色主题和移动端适配
@@ -70,7 +71,7 @@ http://服务器IP:8080
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/install.sh \
-  | sudo SINGDECK_VERSION=v0.3.7 sh
+  | sudo SINGDECK_VERSION=v0.3.8 sh
 ```
 
 ## 更新
