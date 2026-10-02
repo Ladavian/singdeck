@@ -2,16 +2,18 @@
 
 > 面向 Debian / PVE LXC 的 Sing-box Web 控制台，让节点、规则、DNS 与多设备配置在同一处管理。
 
-本仓库是 SingDeck 的**公开发行仓库**，只提供产品介绍、安装维护脚本和经过校验的 AMD64 / ARM64 安装包，不包含 Go、React 或后端业务源代码。
+本仓库是 SingDeck 的**公开发行仓库**，只提供产品介绍、安装维护脚本和经过校验的 AMD64 / ARM64 安装包，不包含应用源代码。最新正式版：[v0.4.0](https://github.com/Ladavian/singdeck/releases/tag/v0.4.0)。
 
 ## 功能概览
 
 - 订阅、节点与节点筛选组管理，支持 Sing-box JSON、Clash YAML/JSON 和常见协议链接
 - 可编辑、可排序的规则策略和远程规则集
-- 每条路由策略对应官方 Dashboard 中可切换的策略组，并显示配置应用状态
+- 内置代理策略、实时连接和流量展示，无需额外安装 Dashboard
 - DNS 分流、FakeIP 和实时查询监控
-- Mixed、TProxy、sing-box 1.14 官方 API / Dashboard 与系统服务管理
+- Mixed、TProxy、旁路由链路、故障恢复与系统服务管理；支持 sing-box 1.14 及以后版本
 - 自动、亮色、暗色主题和移动端适配
+- 可调模糊与不透明度的毛玻璃界面，统一品牌与地区国旗图标
+- 29 个常用服务规则模板、常用地区节点组模板与可编辑 Proxy 总出口
 - 生成其他设备使用的配置链接和二维码
 - SingDeck 软件与 Sing-box 核心在线检查、校验安装、失败恢复和服务重启
 - 管理员用户名和密码修改、全会话退出和加盐密码保护
@@ -40,7 +42,7 @@ curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/inst
 无法直接访问 GitHub 时，可以使用下面的代理安装命令：
 
 ```bash
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/2b1832c3e884a432c2978dfdd7b504327db6699f/scripts/install.sh" \
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/v0.4.0/scripts/install.sh" \
   | sudo GITHUB_PROXY=https://gh-proxy.com sh
 ```
 
@@ -71,7 +73,7 @@ http://服务器IP:8080
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/install.sh \
-  | sudo SINGDECK_VERSION=v0.3.9 sh
+  | sudo SINGDECK_VERSION=v0.4.0 sh
 ```
 
 ## 更新
@@ -87,7 +89,7 @@ curl -fsSL https://raw.githubusercontent.com/Ladavian/singdeck/main/scripts/upda
 无法直连 GitHub 时：
 
 ```bash
-curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/2b1832c3e884a432c2978dfdd7b504327db6699f/scripts/install.sh" \
+curl -fsSL "https://gh-proxy.com/https://raw.githubusercontent.com/Ladavian/singdeck/v0.4.0/scripts/install.sh" \
   | sudo GITHUB_PROXY=https://gh-proxy.com sh
 ```
 

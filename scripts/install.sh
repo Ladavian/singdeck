@@ -2,7 +2,7 @@
 set -eu
 
 REPO="Ladavian/singdeck"
-LATEST_SINGDECK_VERSION="v0.3.9"
+LATEST_SINGDECK_VERSION="v0.4.0"
 SING_BOX_VERSION="1.14.2"
 GITHUB_PROXY=${GITHUB_PROXY:-}
 GITHUB_PROXY_NONCE=$(date +%s)
@@ -165,7 +165,6 @@ Type=simple
 User=root
 Group=root
 EnvironmentFile=-/etc/singdeck/singdeck.env
-ExecStartPre=/usr/local/bin/singdeck --restore-network --data-dir /var/lib/singdeck --sing-box /usr/local/bin/sing-box --config /etc/sing-box/config.json
 ExecStart=/usr/local/bin/singdeck --listen 0.0.0.0:8080 --data-dir /var/lib/singdeck --sing-box /usr/local/bin/sing-box --config /etc/sing-box/config.json
 Restart=on-failure
 RestartSec=3
@@ -191,10 +190,14 @@ Wants=network-online.target singdeck.service
 [Service]
 Type=simple
 ExecStart=/usr/local/bin/sing-box run -D /var/lib/sing-box -C /etc/sing-box
+ExecStartPost=/usr/local/bin/singdeck --data-dir /var/lib/singdeck --restore-network
+ExecStopPost=/usr/local/bin/singdeck --release-network
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=1048576
+TimeoutStartSec=45
+TimeoutStopSec=15
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
 
