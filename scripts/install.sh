@@ -2,7 +2,7 @@
 set -eu
 
 REPO="Ladavian/singdeck"
-LATEST_SINGDECK_VERSION="v0.4.0"
+LATEST_SINGDECK_VERSION="v0.4.1"
 SING_BOX_VERSION="1.14.2"
 GITHUB_PROXY=${GITHUB_PROXY:-}
 GITHUB_PROXY_NONCE=$(date +%s)
@@ -186,15 +186,17 @@ cat > /etc/systemd/system/sing-box.service <<'EOF'
 Description=sing-box Service managed by SingDeck
 After=network-online.target singdeck.service
 Wants=network-online.target singdeck.service
+StartLimitIntervalSec=120
+StartLimitBurst=5
 
 [Service]
 Type=simple
 ExecStart=/usr/local/bin/sing-box run -D /var/lib/sing-box -C /etc/sing-box
 ExecStartPost=/usr/local/bin/singdeck --data-dir /var/lib/singdeck --restore-network
-ExecStopPost=/usr/local/bin/singdeck --release-network
+ExecStopPost=/usr/local/bin/singdeck --data-dir /var/lib/singdeck --release-network
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
-RestartSec=3
+RestartSec=10
 LimitNOFILE=1048576
 TimeoutStartSec=45
 TimeoutStopSec=15
